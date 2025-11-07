@@ -38,7 +38,8 @@ serve(async (req) => {
           { role: "system", content: SYSTEM_PROMPT },
           { role: "user", content: question }
         ],
-        max_tokens: 200,
+        max_tokens: 180, // Limit to ~130-160 words
+        temperature: 0.7,
       }),
     });
 
@@ -68,6 +69,24 @@ serve(async (req) => {
 
     if (!answer) {
       throw new Error("No response from AI");
+    }
+
+    // Check for disallowed content patterns
+    const disallowedPatterns = [
+      /illegal/i, /violence/i, /self-harm/i, /explicit/i
+    ];
+    
+    const hasDisallowedContent = disallowedPatterns.some(pattern => 
+      pattern.test(question)
+    );
+
+    if (hasDisallowedContent) {
+      return new Response(
+        JSON.stringify({ 
+          answer: "I'm sorry—I can't help with that. I can discuss legal and ethical alternatives if you want, or we can focus on interview-related questions about my background, skills, and experience." 
+        }), 
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
     console.log('Generated answer:', answer);

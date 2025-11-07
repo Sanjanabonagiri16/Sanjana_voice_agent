@@ -4,6 +4,8 @@ import { Card } from '@/components/ui/card';
 import { Mic, MicOff, Volume2, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { AudioControls } from './AudioControls';
+import { ListeningIndicator } from './ListeningIndicator';
 
 type MicState = 'idle' | 'listening' | 'processing';
 
@@ -20,6 +22,7 @@ export const VoiceInterface: React.FC<VoiceInterfaceProps> = ({
   const [transcript, setTranscript] = useState('');
   const [response, setResponse] = useState('');
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [currentUtterance, setCurrentUtterance] = useState<SpeechSynthesisUtterance | null>(null);
   const { toast } = useToast();
   
   const recognitionRef = useRef<any>(null);
@@ -62,13 +65,19 @@ export const VoiceInterface: React.FC<VoiceInterfaceProps> = ({
         if (event.error === 'no-speech') {
           toast({
             title: "No speech detected",
-            description: "Please try again and speak clearly.",
+            description: "Sorry — I couldn't hear that. Please type your question or try again.",
+            variant: "destructive",
+          });
+        } else if (event.error === 'not-allowed') {
+          toast({
+            title: "Microphone access denied",
+            description: "Please allow microphone access to use voice input.",
             variant: "destructive",
           });
         } else {
           toast({
             title: "Recognition error",
-            description: "Please try again or use text input.",
+            description: "Sorry — I couldn't hear that. Please type your question or try again.",
             variant: "destructive",
           });
         }
@@ -98,7 +107,7 @@ export const VoiceInterface: React.FC<VoiceInterfaceProps> = ({
     if (!recognitionRef.current) {
       toast({
         title: "Not supported",
-        description: "Speech recognition is not supported in your browser. Please use text input.",
+        description: "Speech recognition is not supported in your browser. Please use text input instead.",
         variant: "destructive",
       });
       return;
@@ -158,6 +167,7 @@ export const VoiceInterface: React.FC<VoiceInterfaceProps> = ({
         description: error.message || "Failed to get response. Please try again.",
         variant: "destructive",
       });
+      setResponse("I'm sorry, I encountered an error. Please try asking your question again.");
     } finally {
       setMicState('idle');
     }
@@ -177,8 +187,10 @@ export const VoiceInterface: React.FC<VoiceInterfaceProps> = ({
     // Try to use a natural female voice
     const voices = synthRef.current.getVoices();
     const femaleVoice = voices.find(voice => 
+      voice.name.includes('Samantha') ||
+      voice.name.includes('Aria') ||
+      voice.name.includes('Ava') ||
       voice.name.includes('Female') || 
-      voice.name.includes('Samantha') || 
       voice.name.includes('Karen') ||
       voice.name.includes('Victoria')
     ) || voices.find(voice => voice.lang.startsWith('en'));
@@ -187,9 +199,9 @@ export const VoiceInterface: React.FC<VoiceInterfaceProps> = ({
       utterance.voice = femaleVoice;
     }
     
-    utterance.rate = 0.95;
-    utterance.pitch = 1.0;
-    utterance.volume = 1.0;
+    utterance.rate = 0.95; // Medium pace
+    utterance.pitch = 1.0; // Default/medium pitch
+    utterance.volume = 1.0; // Default volume
 
     utterance.onstart = () => {
       console.log('Started speaking');
@@ -199,17 +211,56 @@ export const VoiceInterface: React.FC<VoiceInterfaceProps> = ({
     utterance.onend = () => {
       console.log('Finished speaking');
       setIsSpeaking(false);
+      setCurrentUtterance(null);
     };
 
     utterance.onerror = (error) => {
       console.error('Speech synthesis error:', error);
       setIsSpeaking(false);
+      setCurrentUtterance(null);
     };
 
-    // Small delay for better UX
+    setCurrentUtterance(utterance);
+
+    // Small delay (300ms) for better UX
     setTimeout(() => {
       synthRef.current?.speak(utterance);
     }, 300);
+  };
+
+  const togglePlayPause = () => {
+    if (!synthRef.current || !response) return;
+
+    if (isSpeaking) {
+      synthRef.current.pause();
+      setIsSpeaking(false);
+    } else {
+      if (synthRef.current.paused) {
+        synthRef.current.resume();
+        setIsSpeaking(true);
+      } else {
+        speakResponse(response);
+      }
+    }
+  };
+
+  const replayAudio = () => {
+    if (response) {
+      speakResponse(response);
+    }
+  };
+
+  const summarizeResponse = () => {
+    if (!response) return;
+    
+    const sentences = response.split(/[.!?]+/).filter(s => s.trim());
+    const summary = sentences[0]?.trim() + '.';
+    
+    toast({
+      title: "Summary",
+      description: summary,
+      duration: 5000,
+    });
   };
 
   const toggleMic = () => {
@@ -234,52 +285,82 @@ export const VoiceInterface: React.FC<VoiceInterfaceProps> = ({
   const getMicColor = () => {
     switch (micState) {
       case 'listening':
-        return 'bg-listening';
+        return 'bg-listening hover:bg-listening/90';
       case 'processing':
-        return 'bg-processing';
+        return 'bg-processing hover:bg-processing/90';
       default:
-        return 'bg-primary';
+        return 'bg-primary hover:bg-primary/90';
     }
   };
 
   return (
     <div className="flex flex-col items-center gap-6 w-full">
       {/* Microphone Button */}
-      <Button
-        onClick={toggleMic}
-        disabled={micState === 'processing'}
-        className={`w-32 h-32 rounded-full ${getMicColor()} hover:opacity-90 transition-all duration-300 shadow-lg ${
-          micState === 'listening' ? 'animate-pulse' : ''
-        }`}
-      >
-        {getMicIcon()}
-      </Button>
+      <div className="relative flex flex-col items-center gap-4">
+        <Button
+          onClick={toggleMic}
+          disabled={micState === 'processing'}
+          className={`w-32 h-32 rounded-full ${getMicColor()} transition-all duration-300 shadow-lg hover:shadow-xl ${
+            micState === 'listening' ? 'animate-pulse scale-105' : ''
+          }`}
+          aria-label={micState === 'idle' ? 'Start listening' : micState === 'listening' ? 'Stop listening' : 'Processing'}
+        >
+          {getMicIcon()}
+        </Button>
+        
+        {/* Listening Indicator */}
+        {micState === 'listening' && (
+          <div className="absolute -bottom-8">
+            <ListeningIndicator />
+          </div>
+        )}
+      </div>
 
       {/* Status Text */}
-      <p className="text-sm text-muted-foreground">
+      <p className="text-sm font-medium text-muted-foreground">
         {micState === 'idle' && 'Tap to speak'}
         {micState === 'listening' && 'Listening...'}
-        {micState === 'processing' && 'Processing...'}
+        {micState === 'processing' && 'Processing your question...'}
       </p>
 
       {/* Transcript */}
       {transcript && (
-        <Card className="p-4 w-full max-w-2xl">
-          <h3 className="font-semibold mb-2 text-sm text-muted-foreground">Your Question:</h3>
-          <p className="text-foreground">{transcript}</p>
+        <Card className="p-4 w-full max-w-2xl animate-fade-in border-primary/20">
+          <h3 className="font-semibold mb-2 text-sm text-muted-foreground flex items-center gap-2">
+            <span>Your Question:</span>
+          </h3>
+          <p className="text-foreground leading-relaxed">{transcript}</p>
         </Card>
       )}
 
       {/* Response */}
       {response && (
-        <Card className="p-4 w-full max-w-2xl">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="font-semibold text-sm text-muted-foreground">Response:</h3>
-            {isSpeaking && (
-              <Volume2 className="w-4 h-4 text-accent animate-pulse" />
-            )}
+        <Card className="p-4 w-full max-w-2xl animate-fade-in border-accent/20">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-semibold text-sm text-muted-foreground flex items-center gap-2">
+              Response from Bonagiri:
+              {isSpeaking && (
+                <Volume2 className="w-4 h-4 text-accent animate-pulse" />
+              )}
+            </h3>
           </div>
-          <p className="text-foreground whitespace-pre-wrap">{response}</p>
+          <p className="text-foreground whitespace-pre-wrap leading-relaxed mb-4">{response}</p>
+          
+          <div className="flex items-center justify-between pt-3 border-t border-border">
+            <AudioControls
+              isPlaying={isSpeaking}
+              onPlayPause={togglePlayPause}
+              onReplay={replayAudio}
+            />
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={summarizeResponse}
+              className="text-xs"
+            >
+              Summarize in one sentence
+            </Button>
+          </div>
         </Card>
       )}
     </div>
