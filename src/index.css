@@ -8,74 +8,54 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 210 20% 98%;
-    --foreground: 215 25% 15%;
-
+    --background: 220 20% 98%;
+    --foreground: 222 47% 11%;
     --card: 0 0% 100%;
-    --card-foreground: 215 25% 15%;
-
+    --card-foreground: 222 47% 11%;
     --popover: 0 0% 100%;
-    --popover-foreground: 215 25% 15%;
-
-    --primary: 191 80% 42%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 221 83% 53%;
     --primary-foreground: 0 0% 100%;
-
-    --secondary: 210 20% 95%;
-    --secondary-foreground: 215 25% 15%;
-
-    --muted: 210 20% 95%;
-    --muted-foreground: 215 15% 45%;
-
-    --accent: 12 85% 65%;
+    --secondary: 220 17% 93%;
+    --secondary-foreground: 222 47% 11%;
+    --muted: 220 17% 93%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 199 89% 48%;
     --accent-foreground: 0 0% 100%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 191 80% 42%;
-
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 220 13% 88%;
+    --input: 220 13% 88%;
+    --ring: 221 83% 53%;
     --radius: 0.75rem;
-    
-    --listening: 191 80% 50%;
-    --processing: 45 100% 55%;
+    --listening: 142 76% 45%;
+    --processing: 45 93% 47%;
     --success: 142 71% 45%;
-    
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .dark {
-    --background: 215 30% 8%;
+    --background: 222 47% 11%;
     --foreground: 210 40% 98%;
-
-    --card: 215 25% 12%;
+    --card: 222 40% 15%;
     --card-foreground: 210 40% 98%;
-
-    --popover: 215 25% 12%;
+    --popover: 222 40% 15%;
     --popover-foreground: 210 40% 98%;
-
-    --primary: 191 75% 50%;
-    --primary-foreground: 215 30% 8%;
-
-    --secondary: 215 25% 15%;
+    --primary: 221 83% 53%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 217 33% 20%;
     --secondary-foreground: 210 40% 98%;
-
-    --muted: 215 25% 15%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 12 85% 65%;
-    --accent-foreground: 215 30% 8%;
-
-    --destructive: 0 62.8% 30.6%;
+    --muted: 217 33% 20%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 199 89% 48%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 63% 31%;
     --destructive-foreground: 210 40% 98%;
-
-    --border: 215 25% 20%;
-    --input: 215 25% 20%;
-    --ring: 191 75% 50%;
-    
-    --listening: 191 75% 55%;
-    --processing: 45 100% 60%;
+    --border: 217 33% 20%;
+    --input: 217 33% 20%;
+    --ring: 221 83% 53%;
+    --listening: 142 76% 45%;
+    --processing: 45 93% 47%;
     --success: 142 71% 50%;
   }
 }
@@ -86,6 +66,6 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans antialiased;
   }
 }

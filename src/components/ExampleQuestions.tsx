@@ -69,7 +69,7 @@ export const ExampleQuestions: React.FC<ExampleQuestionsProps> = ({
         {questionCategories.map((category, categoryIndex) => (
           <div 
             key={categoryIndex}
-            className="bg-card border border-border rounded-lg p-4 hover:shadow-md transition-all duration-300"
+            className="bg-card/80 backdrop-blur-sm border border-border rounded-xl p-5 hover:shadow-xl hover:border-primary/30 transition-all duration-300"
           >
             <button
               onClick={() => setExpandedCategory(expandedCategory === category.category ? null : category.category)}

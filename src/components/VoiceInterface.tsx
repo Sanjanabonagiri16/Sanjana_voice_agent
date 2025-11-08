@@ -318,12 +318,15 @@ export const VoiceInterface: React.FC<VoiceInterfaceProps> = ({
         <Button
           onClick={toggleMic}
           disabled={micState === 'processing'}
-          className={`w-32 h-32 rounded-full ${getMicColor()} transition-all duration-300 shadow-lg hover:shadow-xl ${
-            micState === 'listening' ? 'animate-pulse scale-105' : ''
-          }`}
+          className={`w-36 h-36 rounded-full ${getMicColor()} transition-all duration-300 shadow-2xl hover:shadow-[0_20px_50px_rgba(8,_112,_184,_0.7)] ${
+            micState === 'listening' ? 'animate-pulse scale-110' : 'hover:scale-105'
+          } relative overflow-hidden`}
           aria-label={micState === 'idle' ? 'Start listening' : micState === 'listening' ? 'Stop listening' : 'Processing'}
         >
-          {getMicIcon()}
+          <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent"></div>
+          <div className="relative z-10">
+            {getMicIcon()}
+          </div>
         </Button>
         
         {/* Listening Indicator */}
@@ -335,34 +338,47 @@ export const VoiceInterface: React.FC<VoiceInterfaceProps> = ({
       </div>
 
       {/* Status Text */}
-      <p className="text-sm font-medium text-muted-foreground">
-        {micState === 'idle' && 'Tap to speak'}
-        {micState === 'listening' && 'Listening...'}
-        {micState === 'processing' && 'Processing your question...'}
-      </p>
+      <div className="text-center">
+        <p className="text-base font-semibold text-foreground">
+          {micState === 'idle' && 'Ready to listen'}
+          {micState === 'listening' && 'I\'m listening...'}
+          {micState === 'processing' && 'Processing your question'}
+        </p>
+        <p className="text-xs text-muted-foreground mt-1">
+          {micState === 'idle' && 'Tap the microphone or use text input below'}
+          {micState === 'listening' && 'Speak clearly into your device'}
+          {micState === 'processing' && 'Generating response...'}
+        </p>
+      </div>
 
       {/* Transcript */}
       {transcript && (
-        <Card className="p-4 w-full max-w-2xl animate-fade-in border-primary/20">
-          <h3 className="font-semibold mb-2 text-sm text-muted-foreground flex items-center gap-2">
-            <span>Your Question:</span>
+        <Card className="p-6 w-full max-w-2xl animate-fade-in border-primary/30 bg-gradient-to-br from-primary/5 to-transparent shadow-lg">
+          <h3 className="font-bold mb-3 text-sm text-primary flex items-center gap-2">
+            <div className="w-6 h-6 rounded-lg bg-primary/10 flex items-center justify-center">
+              <span className="text-xs">💬</span>
+            </div>
+            <span>Your Question</span>
           </h3>
-          <p className="text-foreground leading-relaxed">{transcript}</p>
+          <p className="text-foreground leading-relaxed font-medium">{transcript}</p>
         </Card>
       )}
 
       {/* Response */}
       {response && (
-        <Card className="p-4 w-full max-w-2xl animate-fade-in border-accent/20">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="font-semibold text-sm text-muted-foreground flex items-center gap-2">
-              Response from Bonagiri:
+        <Card className="p-6 w-full max-w-2xl animate-fade-in border-accent/30 bg-gradient-to-br from-accent/5 to-transparent shadow-lg">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-bold text-sm text-accent flex items-center gap-2">
+              <div className="w-6 h-6 rounded-lg bg-accent/10 flex items-center justify-center">
+                <span className="text-xs">🤖</span>
+              </div>
+              <span>Response from Bonagiri</span>
               {isSpeaking && (
                 <Volume2 className="w-4 h-4 text-accent animate-pulse" />
               )}
             </h3>
           </div>
-          <p className="text-foreground whitespace-pre-wrap leading-relaxed mb-4">{response}</p>
+          <p className="text-foreground whitespace-pre-wrap leading-relaxed mb-4 text-[15px]">{response}</p>
           
           <div className="flex flex-col gap-3 pt-3 border-t border-border">
             <div className="flex items-center justify-between">

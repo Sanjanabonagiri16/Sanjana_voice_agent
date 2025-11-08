@@ -26,27 +26,33 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
+    <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/10">
       {/* Header */}
-      <header className="border-b border-border bg-gradient-to-r from-card/90 via-primary/5 to-card/90 backdrop-blur-sm sticky top-0 z-10 shadow-lg">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-2xl animate-pulse">
-              🤖
+      <header className="border-b border-border/50 bg-card/95 backdrop-blur-xl sticky top-0 z-10 shadow-lg">
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="relative">
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary via-accent to-primary flex items-center justify-center text-3xl shadow-xl">
+                🤖
+              </div>
+              <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-listening rounded-full border-2 border-card animate-pulse"></div>
             </div>
             <div>
-              <h1 className="text-2xl md:text-4xl font-bold text-foreground">
-                100x Voice Agent — Bonagiri Sanjana
+              <h1 className="text-3xl md:text-5xl font-bold text-foreground tracking-tight">
+                100x Voice Agent
               </h1>
+              <p className="text-lg md:text-xl text-primary font-semibold mt-1">
+                Bonagiri Sanjana
+              </p>
               <p className="text-muted-foreground mt-1 text-xs md:text-sm">
                 Python Developer · Full Stack Engineer · AI/ML Specialist
               </p>
             </div>
           </div>
-          <div className="flex flex-wrap gap-2 mt-3">
-            <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full font-medium">2+ Years Experience</span>
-            <span className="text-xs bg-accent/10 text-accent px-2 py-1 rounded-full font-medium">70+ Projects</span>
-            <span className="text-xs bg-secondary/30 text-foreground px-2 py-1 rounded-full font-medium">10 SaaS Products</span>
+          <div className="flex flex-wrap gap-2">
+            <span className="text-xs bg-gradient-to-r from-primary/20 to-primary/10 text-primary px-3 py-1.5 rounded-full font-semibold border border-primary/20">2+ Years Experience</span>
+            <span className="text-xs bg-gradient-to-r from-accent/20 to-accent/10 text-accent px-3 py-1.5 rounded-full font-semibold border border-accent/20">70+ Projects</span>
+            <span className="text-xs bg-gradient-to-r from-listening/20 to-listening/10 text-listening px-3 py-1.5 rounded-full font-semibold border border-listening/20">10 SaaS Products</span>
           </div>
         </div>
       </header>
@@ -60,38 +66,48 @@ const Index = () => {
           )}
 
           {/* Instructions */}
-          <Card className="p-4 md:p-6 w-full bg-gradient-to-br from-card/60 via-primary/5 to-card/60 backdrop-blur-sm border-primary/20 shadow-lg">
-            <h2 className="font-bold text-lg mb-3 text-foreground flex items-center gap-2">
-              <span className="text-2xl">📋</span>
-              <span>How to use this Voice Agent:</span>
+          <Card className="p-6 md:p-8 w-full bg-card/80 backdrop-blur-sm border-primary/10 shadow-xl">
+            <h2 className="font-bold text-xl mb-6 text-foreground flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
+                <span className="text-xl">📋</span>
+              </div>
+              <span>How to use this Voice Agent</span>
             </h2>
-            <div className="grid md:grid-cols-2 gap-3">
-              <div className="flex items-start gap-3 bg-background/50 p-3 rounded-lg">
-                <span className="text-2xl">🎙️</span>
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="flex items-start gap-4 bg-gradient-to-br from-primary/5 to-transparent p-4 rounded-xl border border-primary/10 hover:border-primary/30 transition-all">
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <span className="text-2xl">🎙️</span>
+                </div>
                 <div>
-                  <p className="text-sm font-semibold text-foreground">Voice Input</p>
-                  <p className="text-xs text-muted-foreground">Tap the microphone to speak your question clearly</p>
+                  <p className="text-sm font-bold text-foreground mb-1">Voice Input</p>
+                  <p className="text-xs text-muted-foreground leading-relaxed">Tap the microphone to speak your question clearly</p>
                 </div>
               </div>
-              <div className="flex items-start gap-3 bg-background/50 p-3 rounded-lg">
-                <span className="text-2xl">⌨️</span>
+              <div className="flex items-start gap-4 bg-gradient-to-br from-accent/5 to-transparent p-4 rounded-xl border border-accent/10 hover:border-accent/30 transition-all">
+                <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center flex-shrink-0">
+                  <span className="text-2xl">⌨️</span>
+                </div>
                 <div>
-                  <p className="text-sm font-semibold text-foreground">Text Input</p>
-                  <p className="text-xs text-muted-foreground">Type your question in the text box below</p>
+                  <p className="text-sm font-bold text-foreground mb-1">Text Input</p>
+                  <p className="text-xs text-muted-foreground leading-relaxed">Type your question in the text box below</p>
                 </div>
               </div>
-              <div className="flex items-start gap-3 bg-background/50 p-3 rounded-lg">
-                <span className="text-2xl">💬</span>
+              <div className="flex items-start gap-4 bg-gradient-to-br from-listening/5 to-transparent p-4 rounded-xl border border-listening/10 hover:border-listening/30 transition-all">
+                <div className="w-12 h-12 rounded-xl bg-listening/10 flex items-center justify-center flex-shrink-0">
+                  <span className="text-2xl">💬</span>
+                </div>
                 <div>
-                  <p className="text-sm font-semibold text-foreground">Quick Questions</p>
-                  <p className="text-xs text-muted-foreground">Click example questions organized by category</p>
+                  <p className="text-sm font-bold text-foreground mb-1">Quick Questions</p>
+                  <p className="text-xs text-muted-foreground leading-relaxed">Click example questions organized by category</p>
                 </div>
               </div>
-              <div className="flex items-start gap-3 bg-background/50 p-3 rounded-lg">
-                <span className="text-2xl">🔊</span>
+              <div className="flex items-start gap-4 bg-gradient-to-br from-processing/5 to-transparent p-4 rounded-xl border border-processing/10 hover:border-processing/30 transition-all">
+                <div className="w-12 h-12 rounded-xl bg-processing/10 flex items-center justify-center flex-shrink-0">
+                  <span className="text-2xl">🔊</span>
+                </div>
                 <div>
-                  <p className="text-sm font-semibold text-foreground">Audio Playback</p>
-                  <p className="text-xs text-muted-foreground">Responses spoken aloud with text captions and controls</p>
+                  <p className="text-sm font-bold text-foreground mb-1">Audio Playback</p>
+                  <p className="text-xs text-muted-foreground leading-relaxed">Responses spoken aloud with text captions and controls</p>
                 </div>
               </div>
             </div>
