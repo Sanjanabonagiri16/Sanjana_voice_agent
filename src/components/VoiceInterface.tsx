@@ -6,6 +6,7 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { AudioControls } from './AudioControls';
 import { ListeningIndicator } from './ListeningIndicator';
+import { SpeedControl } from './SpeedControl';
 
 type MicState = 'idle' | 'listening' | 'processing';
 
@@ -23,6 +24,7 @@ export const VoiceInterface: React.FC<VoiceInterfaceProps> = ({
   const [response, setResponse] = useState('');
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [currentUtterance, setCurrentUtterance] = useState<SpeechSynthesisUtterance | null>(null);
+  const [speechRate, setSpeechRate] = useState(1.0);
   const { toast } = useToast();
   
   const recognitionRef = useRef<any>(null);
@@ -199,7 +201,7 @@ export const VoiceInterface: React.FC<VoiceInterfaceProps> = ({
       utterance.voice = femaleVoice;
     }
     
-    utterance.rate = 0.95; // Medium pace
+    utterance.rate = speechRate; // Use selected speed
     utterance.pitch = 1.0; // Default/medium pitch
     utterance.volume = 1.0; // Default volume
 
@@ -260,6 +262,22 @@ export const VoiceInterface: React.FC<VoiceInterfaceProps> = ({
       title: "Summary",
       description: summary,
       duration: 5000,
+    });
+  };
+
+  const handleSpeedChange = (speed: number) => {
+    setSpeechRate(speed);
+    
+    // If currently speaking, restart with new speed
+    if (isSpeaking && response) {
+      synthRef.current?.cancel();
+      speakResponse(response);
+    }
+    
+    toast({
+      title: "Speed Updated",
+      description: `Voice speed set to ${speed === 0.75 ? 'slower' : speed === 1.0 ? 'normal' : 'faster'}`,
+      duration: 2000,
     });
   };
 
@@ -346,20 +364,26 @@ export const VoiceInterface: React.FC<VoiceInterfaceProps> = ({
           </div>
           <p className="text-foreground whitespace-pre-wrap leading-relaxed mb-4">{response}</p>
           
-          <div className="flex items-center justify-between pt-3 border-t border-border">
-            <AudioControls
-              isPlaying={isSpeaking}
-              onPlayPause={togglePlayPause}
-              onReplay={replayAudio}
+          <div className="flex flex-col gap-3 pt-3 border-t border-border">
+            <div className="flex items-center justify-between">
+              <AudioControls
+                isPlaying={isSpeaking}
+                onPlayPause={togglePlayPause}
+                onReplay={replayAudio}
+              />
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={summarizeResponse}
+                className="text-xs"
+              >
+                Summarize in one sentence
+              </Button>
+            </div>
+            <SpeedControl
+              currentSpeed={speechRate}
+              onSpeedChange={handleSpeedChange}
             />
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={summarizeResponse}
-              className="text-xs"
-            >
-              Summarize in one sentence
-            </Button>
           </div>
         </Card>
       )}
