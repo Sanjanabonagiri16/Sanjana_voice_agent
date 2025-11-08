@@ -170,7 +170,7 @@ const Index = () => {
               </div>
 
               <p className="text-xs text-muted-foreground/60 text-center">
-                Built with Lovable · Powered by AI
+                © 2025 Bonagiri Sanjana · All Rights Reserved
               </p>
             </div>
           </footer>
